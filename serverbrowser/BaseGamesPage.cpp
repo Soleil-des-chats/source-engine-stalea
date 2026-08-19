@@ -2167,7 +2167,7 @@ void CBaseGamesPage::OnFavoritesMsg( FavoritesListChanged_t *pFavListChanged )
 			if ( pFavListChanged->m_bAdd )	
 			{
 
-			// TODO(nillerusr): implement this
+			// TODO: implement this
 			//	if ( steamapicontext->SteamMatchmakingServers() )
 			//		steamapicontext->SteamMatchmakingServers()->PingServer( pFavListChanged->m_nIP, pFavListChanged->m_nQueryPort, this );
 			}

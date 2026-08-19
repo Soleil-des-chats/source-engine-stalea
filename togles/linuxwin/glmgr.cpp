@@ -2471,7 +2471,7 @@ GLMContext::GLMContext( IDirect3DDevice9 *pDevice, GLMDisplayParams *params )
 		printf( "GLMContext::GLMContext: GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB enabled!\n" );
 #endif
 
-		// TODO(nillerusr): rewrite me!!!
+		// TODO: rewrite me!!!
 		// This should be there if we get in here--make sure.
 		gGL->glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, (const GLuint *)NULL, GL_TRUE);
 

@@ -3160,7 +3160,7 @@ inline bool Studio_ConvertStudioHdrToNewVersion( studiohdr_t *pStudioHdr )
 
 	// for now, just slam the version number since they're compatible
 
-	// nillerusr: that's stupid, comment this shit
+	// that's stupid, comment this shit
 	//pStudioHdr->version = STUDIO_VERSION;
 
 	return bResult;
@@ -3301,7 +3301,7 @@ inline int Studio_LoadVertexes( const vertexFileHeader_t *pTempVvdHdr, vertexFil
 
 		// copy vertexes
 
-		// TODO(nillerusr): That sucks and needs to be fixed
+		// TODO: That sucks and needs to be fixed
 		memcpy(
 			(byte*)((mstudiovertex_t *)((byte *)pNewVvdHdr+pNewVvdHdr->vertexDataStart) + target),
 			(byte*)((mstudiovertex_t *)((byte *)pTempVvdHdr+pTempVvdHdr->vertexDataStart) + pFixupTable[i].sourceVertexID),

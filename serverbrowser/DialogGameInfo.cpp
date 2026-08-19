@@ -411,7 +411,7 @@ void CDialogGameInfo::OnConnect()
 
 	ConnectToServer();
 
-	//TODO(nillerusr): restore this later
+	//TODO: restore this later
 	//RequestInfo();
 }
 
@@ -651,7 +651,7 @@ void CDialogGameInfo::ConnectToServer()
 
 	// check the player count
 
-	// nillerusr
+	//
 	/*if ( m_Server.m_nPlayers >= m_Server.m_nMaxPlayers )
 	{
 		// mark why we cannot connect

@@ -1883,7 +1883,7 @@ void CMaterialSystem::ReadConfigFromConVars( MaterialSystem_Config_t *pConfig )
 	pConfig->bReverseDepth = mat_reversedepth.GetInt() ? true : false;
 
 #ifdef DX_TO_GL_ABSTRACTION
-	pConfig->bBufferPrimitives = false; // nillerusr: causes rendering bugs and sefaults with nvidia driver
+	pConfig->bBufferPrimitives = false; // causes rendering bugs and sefaults with nvidia driver
 #else
 	pConfig->bBufferPrimitives = mat_bufferprimitives.GetInt() ? true : false;
 #endif

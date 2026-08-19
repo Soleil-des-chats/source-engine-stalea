@@ -455,7 +455,7 @@ bool GetVTFPreload360Data( const char *pDebugName, CUtlBuffer &fileBufferIn, CUt
 // compiler pads, the 360 compiler does NOT.
 //-----------------------------------------------------------------------------
 
-// nillerusr: try to avoid problems with pragma pack, remove c++ inheritance to make this structs platform-independent
+// TODO: try to avoid problems with pragma pack, remove c++ inheritance to make this structs platform-independent
 
 struct alignas(16) VTFFileBaseHeader_t
 {

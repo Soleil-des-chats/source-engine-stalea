@@ -230,7 +230,7 @@ void *VoidFnPtrLookup_GlMgr(const char *fn, bool &okay, const bool bRequired, vo
 {
 	void *retval = NULL;
 
-#ifndef TOGLES // TODO(nillerusr): remove this hack
+#ifndef TOGLES // TODO: remove this hack
 	if ((!okay) && (!bRequired))  // always look up if required (so we get a complete list of crucial missing symbols).
 		return NULL;
 #endif
@@ -270,7 +270,7 @@ void *VoidFnPtrLookup_GlMgr(const char *fn, bool &okay, const bool bRequired, vo
 	//  You always have to check that the extension is supported;
 	//  an implementation MAY return NULL in this case, but it doesn't have to (and doesn't, with the DRI drivers).
 
-#ifdef TOGLES // TODO(nillerusr): remove this hack
+#ifdef TOGLES // TODO: remove this hack
 	okay = retval != NULL;
 #else
 	okay = (okay && (retval != NULL));

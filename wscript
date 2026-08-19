@@ -1,6 +1,5 @@
 #! /usr/bin/env python
 # encoding: utf-8
-# nillerusr
 
 from __future__ import print_function
 from waflib import Logs, Context, Configure
@@ -333,7 +332,7 @@ def options(opt):
 	grp.add_option('--togles', action = 'store_true', dest = 'TOGLES', default = False,
 		help = 'build engine with ToGLES [default: %default]')
 
-	# TODO(nillerusr): add wscript for opus building
+	# TODO: add wscript for opus building
 	grp.add_option('--enable-opus', action = 'store_true', dest = 'OPUS', default = False,
 		help = 'build engine with Opus voice codec [default: %default]')
 	

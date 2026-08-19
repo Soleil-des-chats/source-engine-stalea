@@ -254,7 +254,7 @@ public:
 #endif
 	}
 
-	// TODO(nillerusr): fix asan issue later
+	// TODO: fix asan issue later
 	NO_ASAN TSLNodeBase_t *Pop()
 	{
 #ifdef USE_NATIVE_SLIST

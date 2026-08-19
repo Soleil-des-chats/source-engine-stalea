@@ -2638,14 +2638,14 @@ public:
          X[i] = P[i];
       normalize(X);
 
-// Its y axis is perpendicular to P, so Y = unit( E - X(E·X) ).
+// Its y axis is perpendicular to P, so Y = unit( E - X(Eï¿½X) ).
 
       float dDOTx = dot(D,X);
       for (i = 0 ; i < 3 ; i++)
          Y[i] = D[i] - dDOTx * X[i];
       normalize(Y);
 
-// Its z axis is perpendicular to both X and Y, so Z = X×Y.
+// Its z axis is perpendicular to both X and Y, so Z = Xï¿½Y.
 
       cross(X,Y,Z);
 
@@ -5613,7 +5613,7 @@ bool Studio_AnimPosition( mstudioanimdesc_t *panim, float flCycle, Vector &vecPo
 	for (int i = 0; i < panim->nummovements; i++)
 	{
 		mstudiomovement_t pmove;
-		// TODO(nillerusr): fix alignment on model loading
+		// TODO: fix alignment on model loading
 		V_memcpy(&pmove, panim->pMovement( i ), sizeof(mstudiomovement_t));
 
 		if (pmove.endframe >= flFrame)

@@ -185,7 +185,7 @@ void CMeshInstance::Init( const virtualmeshlist_t &list )
 	}
 }
 
-const int g_MeshSize = (2048 * 1024 * 4); // nillerusr: 2 MiB should be enough, old value causes problems in ep2
+const int g_MeshSize = (2048 * 1024 * 4); // INFO: 2 MiB should be enough, old value causes problems in ep2
 static CDataManager<CMeshInstance, virtualmeshlist_t, CMeshInstance *, CThreadFastMutex> g_MeshManager( g_MeshSize );
 static int numIndices = 0, numTriangles = 0, numBaseTriangles = 0, numSplits = 0;
 //-----------------------------------------------------------------------------

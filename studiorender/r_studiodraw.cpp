@@ -1235,7 +1235,7 @@ public:
 #if !defined( _X360 )
 				Assert( dstVertex.m_vecUserData.w == -1.0f || dstVertex.m_vecUserData.w == 1.0f );
 
-#if 0 // FIXME(nillerusr): causing a crash, reason: misalign?
+#if 0 // FIXME: causing a crash, reason: misalign?
 				if ( nHasSIMD )
 				{
 					meshBuilder.FastVertexSSE( dstVertex );
@@ -1251,7 +1251,7 @@ public:
 			}
 			else
 			{
-#if 0 // FIXME(nillerusr): causing a crash, reason: misalign?
+#if 0 // FIXME: causing a crash, reason: misalign?
 				if ( nHasSIMD )
 				{
 					meshBuilder.FastVertexSSE( *(ModelVertexDX7_t*)&dstVertex );

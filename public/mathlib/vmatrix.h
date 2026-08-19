@@ -1807,7 +1807,7 @@ inline void MatrixBuildScale( VMatrix &dst, const Vector& scale )
 	MatrixBuildScale( dst, scale.x, scale.y, scale.z );
 }
 
-// nillerusr: optimize this bruh later
+// TODO: optimize this bruh later
 inline void MatrixBuildPerspective( VMatrix &dst, float fovX, float fovY, float zNear, float zFar )
 {
 	// FIXME: collapse all of this into one matrix after we figure out what all should be in here.
