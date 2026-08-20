@@ -46,7 +46,6 @@ This project uses the [WAF build system](https://waf.io/book) — check the book
 # Current tasks
 - Fix compatibility issues with newer versions of games
 - Improve iOS support
-- Implement Portal branch
 
 ## 🛠️ Building
 
