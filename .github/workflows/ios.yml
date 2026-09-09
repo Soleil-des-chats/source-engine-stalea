@@ -19,9 +19,12 @@ jobs:
 
       - name: Install dependencies
         run: |
-          brew install sdl2
+          brew install sdl2 freetype
 
       - name: Configure iOS
+        env:
+          SDKROOT: iphoneos
+          IPHONEOS_DEPLOYMENT_TARGET: "12.0"
         run: |
           ./waf configure \
             -T release \
@@ -29,10 +32,15 @@ jobs:
             --disable-warns
 
       - name: Build iOS
+        env:
+          SDKROOT: iphoneos
+          IPHONEOS_DEPLOYMENT_TARGET: "12.0"
+          CODE_SIGNING_ALLOWED: NO
+          CODE_SIGNING_REQUIRED: NO
         run: |
           ./waf build
 
-      - name: Find iOS app
+      - name: Find application
         run: |
           find . -type d -name "*.app" -print
 
@@ -47,19 +55,18 @@ jobs:
             exit 1
           fi
 
-          echo "Using: $APP"
+          echo "Found: $APP"
 
           rm -rf Payload
-          mkdir -p Payload
+          mkdir Payload
 
           cp -R "$APP" Payload/
 
           APP_NAME=$(basename "$APP")
 
-          # Ensure the application is unsigned.
           codesign --remove-signature "Payload/$APP_NAME" || true
 
-          zip -r "Stalea-iOS-unsigned.ipa" Payload
+          zip -r Stalea-iOS-unsigned.ipa Payload
 
       - name: Upload unsigned IPA
         uses: actions/upload-artifact@v4
