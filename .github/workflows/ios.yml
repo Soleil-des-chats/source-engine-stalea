@@ -2,9 +2,9 @@ name: Build iOS
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
@@ -17,6 +17,16 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Show Apple iOS toolchain
+        run: |
+          xcodebuild -version
+          echo "iPhoneOS SDK:"
+          xcrun --sdk iphoneos --show-sdk-path
+          echo "Clang:"
+          xcrun --sdk iphoneos -f clang
+          echo "Clang++:"
+          xcrun --sdk iphoneos -f clang++
+
       - name: Install dependencies
         run: |
           brew install sdl2 freetype
@@ -25,7 +35,17 @@ jobs:
         env:
           SDKROOT: iphoneos
           IPHONEOS_DEPLOYMENT_TARGET: "12.0"
+          CC: clang
+          CXX: clang++
         run: |
+          export SDKROOT="$(xcrun --sdk iphoneos --show-sdk-path)"
+          export CC="$(xcrun --sdk iphoneos -f clang)"
+          export CXX="$(xcrun --sdk iphoneos -f clang++)"
+
+          echo "SDKROOT=$SDKROOT"
+          echo "CC=$CC"
+          echo "CXX=$CXX"
+
           ./waf configure \
             -T release \
             --ios \
@@ -38,10 +58,15 @@ jobs:
           CODE_SIGNING_ALLOWED: NO
           CODE_SIGNING_REQUIRED: NO
         run: |
+          export SDKROOT="$(xcrun --sdk iphoneos --show-sdk-path)"
+          export CC="$(xcrun --sdk iphoneos -f clang)"
+          export CXX="$(xcrun --sdk iphoneos -f clang++)"
+
           ./waf build
 
-      - name: Find application
+      - name: Find iOS application
         run: |
+          echo "Searching for .app..."
           find . -type d -name "*.app" -print
 
       - name: Package unsigned IPA
@@ -55,16 +80,17 @@ jobs:
             exit 1
           fi
 
-          echo "Found: $APP"
+          echo "Found application:"
+          echo "$APP"
 
           rm -rf Payload
-          mkdir Payload
+          mkdir -p Payload
 
           cp -R "$APP" Payload/
 
           APP_NAME=$(basename "$APP")
-
-          codesign --remove-signature "Payload/$APP_NAME" || true
+          
+          codesign --remove-signature "Payload/$APP_NAME" 2>/dev/null || true
 
           zip -r Stalea-iOS-unsigned.ipa Payload
 
