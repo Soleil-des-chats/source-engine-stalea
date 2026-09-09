@@ -1,0 +1,69 @@
+name: Build iOS
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          brew install sdl2
+
+      - name: Configure iOS
+        run: |
+          ./waf configure \
+            -T release \
+            --ios \
+            --disable-warns
+
+      - name: Build iOS
+        run: |
+          ./waf build
+
+      - name: Find iOS app
+        run: |
+          find . -type d -name "*.app" -print
+
+      - name: Package unsigned IPA
+        run: |
+          set -e
+
+          APP=$(find . -type d -name "*.app" | head -n 1)
+
+          if [ -z "$APP" ]; then
+            echo "ERROR: No .app was produced."
+            exit 1
+          fi
+
+          echo "Using: $APP"
+
+          rm -rf Payload
+          mkdir -p Payload
+
+          cp -R "$APP" Payload/
+
+          APP_NAME=$(basename "$APP")
+
+          # Ensure the application is unsigned.
+          codesign --remove-signature "Payload/$APP_NAME" || true
+
+          zip -r "Stalea-iOS-unsigned.ipa" Payload
+
+      - name: Upload unsigned IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stalea-iOS-unsigned
+          path: Stalea-iOS-unsigned.ipa
+          if-no-files-found: error
