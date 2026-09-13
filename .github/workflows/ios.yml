@@ -49,6 +49,7 @@ jobs:
           cmake \
             -S thirdparty/freetype \
             -B build/freetype-ios \
+            -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
             -DCMAKE_SYSTEM_NAME=iOS \
             -DCMAKE_OSX_SYSROOT="$SDK" \
             -DCMAKE_OSX_ARCHITECTURES=arm64 \
