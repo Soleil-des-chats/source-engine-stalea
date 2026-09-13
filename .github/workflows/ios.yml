@@ -204,6 +204,53 @@ jobs:
           test -f build/curl-ios/libcurl.a
 
       # ------------------------------------------------------------
+      # SDL2 (built from thirdparty/SDL-src; thirdparty/SDL is headers-only
+      # and has no library to link against)
+      # ------------------------------------------------------------
+
+      - name: Build SDL2 for iOS
+        run: |
+          set -euxo pipefail
+
+          SDK="$(xcrun --sdk iphoneos --show-sdk-path)"
+
+          rm -rf build/sdl2-ios build/sdl2-ios-install
+
+          cmake \
+            -S thirdparty/SDL-src \
+            -B build/sdl2-ios \
+            -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+            -DCMAKE_SYSTEM_NAME=iOS \
+            -DCMAKE_OSX_SYSROOT="$SDK" \
+            -DCMAKE_OSX_ARCHITECTURES=arm64 \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET="$IPHONEOS_DEPLOYMENT_TARGET" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX="$(pwd)/build/sdl2-ios-install" \
+            -DSDL_STATIC=ON \
+            -DSDL_SHARED=OFF \
+            -DSDL_TEST=OFF
+
+          cmake \
+            --build build/sdl2-ios \
+            --parallel "$(sysctl -n hw.ncpu)"
+
+          cmake --install build/sdl2-ios
+
+          SDL2_LIB="$(find build/sdl2-ios-install -name 'libSDL2.a' | head -n 1)"
+
+          if [ -z "$SDL2_LIB" ]; then
+            echo "ERROR: no libSDL2.a was produced/installed."
+            exit 1
+          fi
+
+          if [ ! -d "build/sdl2-ios-install/include/SDL2" ]; then
+            echo "ERROR: SDL2 headers were not installed where expected."
+            exit 1
+          fi
+
+          test -f "$SDL2_LIB"
+
+      # ------------------------------------------------------------
       # Waf
       # ------------------------------------------------------------
 
