@@ -65,6 +65,143 @@ jobs:
           test -f build/freetype-ios/libfreetype.a
 
       # ------------------------------------------------------------
+      # libjpeg
+      # ------------------------------------------------------------
+
+      - name: Build libjpeg for iOS
+        run: |
+          set -euxo pipefail
+
+          SDK="$(xcrun --sdk iphoneos --show-sdk-path)"
+
+          rm -rf build/jpeg-ios
+
+          cmake \
+            -S thirdparty/libjpeg \
+            -B build/jpeg-ios \
+            -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+            -DCMAKE_SYSTEM_NAME=iOS \
+            -DCMAKE_OSX_SYSROOT="$SDK" \
+            -DCMAKE_OSX_ARCHITECTURES=arm64 \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET="$IPHONEOS_DEPLOYMENT_TARGET" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_STATIC=ON \
+            -DBUILD_EXECUTABLES=OFF \
+            -DBUILD_TESTS=OFF
+
+          cmake \
+            --build build/jpeg-ios \
+            --target jpeg \
+            --parallel "$(sysctl -n hw.ncpu)"
+
+          JPEG_LIB="$(find build/jpeg-ios -name 'libjpeg*.a' | head -n 1)"
+
+          if [ -z "$JPEG_LIB" ]; then
+            echo "ERROR: no libjpeg*.a was produced."
+            exit 1
+          fi
+
+          if [ "$JPEG_LIB" != "build/jpeg-ios/libjpeg.a" ]; then
+            cp "$JPEG_LIB" build/jpeg-ios/libjpeg.a
+          fi
+
+          test -f build/jpeg-ios/libjpeg.a
+
+      # ------------------------------------------------------------
+      # libpng (links against the system zlib shipped in the iOS SDK)
+      # ------------------------------------------------------------
+
+      - name: Build libpng for iOS
+        run: |
+          set -euxo pipefail
+
+          SDK="$(xcrun --sdk iphoneos --show-sdk-path)"
+
+          rm -rf build/png-ios
+
+          cmake \
+            -S thirdparty/libpng \
+            -B build/png-ios \
+            -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+            -DCMAKE_SYSTEM_NAME=iOS \
+            -DCMAKE_OSX_SYSROOT="$SDK" \
+            -DCMAKE_OSX_ARCHITECTURES=arm64 \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET="$IPHONEOS_DEPLOYMENT_TARGET" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DPNG_SHARED=OFF \
+            -DPNG_STATIC=ON \
+            -DPNG_EXECUTABLES=OFF \
+            -DPNG_TESTS=OFF \
+            -DZLIB_INCLUDE_DIR="$SDK/usr/include" \
+            -DZLIB_LIBRARY="$SDK/usr/lib/libz.tbd"
+
+          cmake \
+            --build build/png-ios \
+            --parallel "$(sysctl -n hw.ncpu)"
+
+          PNG_LIB="$(find build/png-ios -name 'libpng*.a' | head -n 1)"
+
+          if [ -z "$PNG_LIB" ]; then
+            echo "ERROR: no libpng*.a was produced."
+            exit 1
+          fi
+
+          if [ "$PNG_LIB" != "build/png-ios/libpng.a" ]; then
+            cp "$PNG_LIB" build/png-ios/libpng.a
+          fi
+
+          test -f build/png-ios/libpng.a
+
+      # ------------------------------------------------------------
+      # curl (Secure Transport for TLS, no external SSL/SSH/IDN deps)
+      # ------------------------------------------------------------
+
+      - name: Build curl for iOS
+        run: |
+          set -euxo pipefail
+
+          SDK="$(xcrun --sdk iphoneos --show-sdk-path)"
+
+          rm -rf build/curl-ios
+
+          cmake \
+            -S thirdparty/curl \
+            -B build/curl-ios \
+            -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+            -DCMAKE_SYSTEM_NAME=iOS \
+            -DCMAKE_OSX_SYSROOT="$SDK" \
+            -DCMAKE_OSX_ARCHITECTURES=arm64 \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET="$IPHONEOS_DEPLOYMENT_TARGET" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DBUILD_CURL_EXE=OFF \
+            -DCMAKE_USE_SECTRANSP=ON \
+            -DCMAKE_USE_OPENSSL=OFF \
+            -DUSE_LIBIDN2=OFF \
+            -DCMAKE_USE_LIBSSH2=OFF \
+            -DCURL_DISABLE_LDAP=ON \
+            -DCURL_DISABLE_LDAPS=ON \
+            -DZLIB_INCLUDE_DIR="$SDK/usr/include" \
+            -DZLIB_LIBRARY="$SDK/usr/lib/libz.tbd"
+
+          cmake \
+            --build build/curl-ios \
+            --parallel "$(sysctl -n hw.ncpu)"
+
+          CURL_LIB="$(find build/curl-ios -name 'libcurl*.a' | head -n 1)"
+
+          if [ -z "$CURL_LIB" ]; then
+            echo "ERROR: no libcurl*.a was produced."
+            exit 1
+          fi
+
+          if [ "$CURL_LIB" != "build/curl-ios/libcurl.a" ]; then
+            cp "$CURL_LIB" build/curl-ios/libcurl.a
+          fi
+
+          test -f build/curl-ios/libcurl.a
+
+      # ------------------------------------------------------------
       # Waf
       # ------------------------------------------------------------
 
@@ -79,6 +216,7 @@ jobs:
           ./waf configure \
             -T release \
             --ios \
+            --togles \
             --disable-warns
 
       - name: Build iOS

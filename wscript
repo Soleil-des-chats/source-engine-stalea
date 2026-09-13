@@ -444,9 +444,24 @@ def check_deps(conf):
 			libpath=[os.path.abspath('build/freetype-ios')]
 		)
 
-		conf.check(lib='jpeg', uselib_store='JPEG', define_name='HAVE_JPEG')
-		conf.check(lib='png', uselib_store='PNG', define_name='HAVE_PNG')
-		conf.check(lib='curl', uselib_store='CURL', define_name='HAVE_CURL')
+		conf.check(
+			lib='jpeg',
+			uselib_store='JPEG',
+			define_name='HAVE_JPEG',
+			libpath=[os.path.abspath('build/jpeg-ios')]
+		)
+		conf.check(
+			lib='png',
+			uselib_store='PNG',
+			define_name='HAVE_PNG',
+			libpath=[os.path.abspath('build/png-ios')]
+		)
+		conf.check(
+			lib='curl',
+			uselib_store='CURL',
+			define_name='HAVE_CURL',
+			libpath=[os.path.abspath('build/curl-ios')]
+		)
 		conf.check(lib='z', uselib_store='ZLIB', define_name='HAVE_ZLIB')
 		if not conf.env.TOGLES:
 			conf.check(lib='gl4es', uselib_store='GL')
