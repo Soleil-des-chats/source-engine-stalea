@@ -22,15 +22,13 @@ old = """    FILE* fp = NULL;
 new = """    FILE* fp = NULL;
     NSFileManager* file_manager = [NSFileManager defaultManager];
     NSString* resource_path = [[NSBundle mainBundle] resourcePath];
+    NSString* ns_string_file_component = [file_manager stringWithFileSystemRepresentation:file length:strlen(file)];
+    NSString* full_path_with_file_to_try = [resource_path stringByAppendingPathComponent:ns_string_file_component];
 
     /* If the file mode is writable, skip all the bundle stuff because generally the bundle is read-only. */
     if(strcmp("r", mode) && strcmp("rb", mode)) {
         return fopen(file, mode);
-    }
-
-    NSString* ns_string_file_component = [file_manager stringWithFileSystemRepresentation:file length:strlen(file)];
-
-    NSString* full_path_with_file_to_try = [resource_path stringByAppendingPathComponent:ns_string_file_component];"""
+    }"""
 
 with open(path) as f:
     content = f.read()
