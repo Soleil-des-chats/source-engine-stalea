@@ -101,7 +101,7 @@ jobs:
             exit 1
           fi
 
-          if [ "$JPEG_LIB" != "build/jpeg-ios/libjpeg.a" ]; then
+          if [ ! -f "build/jpeg-ios/libjpeg.a" ]; then
             cp "$JPEG_LIB" build/jpeg-ios/libjpeg.a
           fi
 
@@ -147,7 +147,7 @@ jobs:
             exit 1
           fi
 
-          if [ "$PNG_LIB" != "build/png-ios/libpng.a" ]; then
+          if [ ! -f "build/png-ios/libpng.a" ]; then
             cp "$PNG_LIB" build/png-ios/libpng.a
           fi
 
@@ -196,7 +196,7 @@ jobs:
             exit 1
           fi
 
-          if [ "$CURL_LIB" != "build/curl-ios/libcurl.a" ]; then
+          if [ ! -f "build/curl-ios/libcurl.a" ]; then
             cp "$CURL_LIB" build/curl-ios/libcurl.a
           fi
 
