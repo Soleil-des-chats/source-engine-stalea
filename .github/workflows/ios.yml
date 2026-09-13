@@ -182,6 +182,7 @@ jobs:
             -DCMAKE_USE_LIBSSH2=OFF \
             -DCURL_DISABLE_LDAP=ON \
             -DCURL_DISABLE_LDAPS=ON \
+            -DHAVE_POLL_FINE_EXITCODE=0 \
             -DZLIB_INCLUDE_DIR="$SDK/usr/include" \
             -DZLIB_LIBRARY="$SDK/usr/lib/libz.tbd"
 
