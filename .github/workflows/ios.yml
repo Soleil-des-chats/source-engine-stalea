@@ -208,6 +208,11 @@ jobs:
       # and has no library to link against)
       # ------------------------------------------------------------
 
+      - name: Patch SDL2 for iOS build
+        run: |
+          set -euxo pipefail
+          python3 patch_sdl2_ios.py
+
       - name: Build SDL2 for iOS
         run: |
           set -euxo pipefail
@@ -228,7 +233,8 @@ jobs:
             -DCMAKE_INSTALL_PREFIX="$(pwd)/build/sdl2-ios-install" \
             -DSDL_STATIC=ON \
             -DSDL_SHARED=OFF \
-            -DSDL_TEST=OFF
+            -DSDL_TEST=OFF \
+            -DCMAKE_C_FLAGS="-Wno-error=declaration-after-statement"
 
           cmake \
             --build build/sdl2-ios \
