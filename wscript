@@ -409,7 +409,6 @@ def check_deps(conf):
 		else:
 			conf.env.FRAMEWORK_UIKIT = "UIKit"
 			conf.env.FRAMEWORK_CFNETWORK = "CFNetwork"
-			conf.env.FRAMEWORK_SDL2 = "SDL2"
 			if not conf.env.ANGLE:
 				conf.env.FRAMEWORK_OPENGLES = "OpenGLES"
 			else:
@@ -467,6 +466,20 @@ def check_deps(conf):
 			conf.check(lib='gl4es', uselib_store='GL')
 		conf.env.FRAMEWORK_OPENAL = "OpenAL"
 		conf.check(framework='CoreFoundation', uselib_store='COREFOUNDATION', msg='Checking for CoreFoundation')
+
+		# thirdparty/SDL is headers-only (no library to link), so SDL2 is
+		# built from thirdparty/SDL-src and installed to build/sdl2-ios-install
+		# by the CI workflow; the generic 'sdl2' waf tool only knows how to
+		# consume a framework or pkg-config package on darwin, neither of
+		# which applies to this static cross-build, so it's wired up here
+		# by hand instead (see the guard around conf.load('sdl2') below).
+		conf.env.INCLUDES_SDL2 = [os.path.abspath('build/sdl2-ios-install/include/SDL2')]
+		conf.check(
+			lib='SDL2',
+			uselib_store='SDL2',
+			libpath=[os.path.abspath('build/sdl2-ios-install/lib')]
+		)
+		conf.env.HAVE_SDL2 = 1
 	else:
 		conf.check(lib='SDL2', uselib_store='SDL2')
 		conf.check(lib='freetype2', uselib_store='FT2')
@@ -695,9 +708,15 @@ def configure(conf):
 
 	check_deps( conf )
 
-	conf.load('sdl2')
-	if not conf.env.HAVE_SDL2:
-		conf.fatal("SDL2 isn't available")
+	if not conf.env.IOS:
+		# iOS builds SDL2 itself in check_deps() above and wires it up by
+		# hand, since the generic 'sdl2' tool only knows how to find a
+		# framework or a pkg-config package on darwin.
+		conf.load('sdl2')
+		if not conf.env.HAVE_SDL2:
+			conf.fatal("SDL2 isn't available")
+		else:
+			conf.env.append_unique('INCLUDES', conf.env.INCLUDES_SDL2)
 	else:
 		conf.env.append_unique('INCLUDES', conf.env.INCLUDES_SDL2)
 
