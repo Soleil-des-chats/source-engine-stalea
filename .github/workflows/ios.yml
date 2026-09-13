@@ -62,7 +62,14 @@ jobs:
             --build build/freetype-ios \
             --parallel "$(sysctl -n hw.ncpu)"
 
-          test -f build/freetype-ios/libfreetype.a
+          FREETYPE_LIB="$(find build/freetype-ios -name 'libfreetype.a' -type f -print -quit)"
+
+          if [ -z "$FREETYPE_LIB" ]; then
+            echo "ERROR: libfreetype.a was not produced."
+            exit 1
+          fi
+
+          cp "$FREETYPE_LIB" build/freetype-ios/libfreetype.a
 
       # ------------------------------------------------------------
       # Waf
