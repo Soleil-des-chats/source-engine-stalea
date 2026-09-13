@@ -44,11 +44,11 @@ jobs:
 
           SDK="$(xcrun --sdk iphoneos --show-sdk-path)"
 
-          rm -rf build/freetype-ios
+          rm -rf ios-deps/freetype-ios
 
           cmake \
             -S thirdparty/freetype \
-            -B build/freetype-ios \
+            -B ios-deps/freetype-ios \
             -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
             -DCMAKE_SYSTEM_NAME=iOS \
             -DCMAKE_OSX_SYSROOT="$SDK" \
@@ -59,10 +59,10 @@ jobs:
             -DFT_BUILD_TESTS=OFF
 
           cmake \
-            --build build/freetype-ios \
+            --build ios-deps/freetype-ios \
             --parallel "$(sysctl -n hw.ncpu)"
 
-          test -f build/freetype-ios/libfreetype.a
+          test -f ios-deps/freetype-ios/libfreetype.a
 
       # ------------------------------------------------------------
       # libjpeg
@@ -74,11 +74,11 @@ jobs:
 
           SDK="$(xcrun --sdk iphoneos --show-sdk-path)"
 
-          rm -rf build/jpeg-ios
+          rm -rf ios-deps/jpeg-ios
 
           cmake \
             -S thirdparty/libjpeg \
-            -B build/jpeg-ios \
+            -B ios-deps/jpeg-ios \
             -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
             -DCMAKE_SYSTEM_NAME=iOS \
             -DCMAKE_OSX_SYSROOT="$SDK" \
@@ -90,22 +90,22 @@ jobs:
             -DBUILD_TESTS=OFF
 
           cmake \
-            --build build/jpeg-ios \
+            --build ios-deps/jpeg-ios \
             --target jpeg \
             --parallel "$(sysctl -n hw.ncpu)"
 
-          JPEG_LIB="$(find build/jpeg-ios -name 'libjpeg*.a' | head -n 1)"
+          JPEG_LIB="$(find ios-deps/jpeg-ios -name 'libjpeg*.a' | head -n 1)"
 
           if [ -z "$JPEG_LIB" ]; then
             echo "ERROR: no libjpeg*.a was produced."
             exit 1
           fi
 
-          if [ ! -f "build/jpeg-ios/libjpeg.a" ]; then
-            cp "$JPEG_LIB" build/jpeg-ios/libjpeg.a
+          if [ ! -f "ios-deps/jpeg-ios/libjpeg.a" ]; then
+            cp "$JPEG_LIB" ios-deps/jpeg-ios/libjpeg.a
           fi
 
-          test -f build/jpeg-ios/libjpeg.a
+          test -f ios-deps/jpeg-ios/libjpeg.a
 
       # ------------------------------------------------------------
       # libpng (links against the system zlib shipped in the iOS SDK)
@@ -117,11 +117,11 @@ jobs:
 
           SDK="$(xcrun --sdk iphoneos --show-sdk-path)"
 
-          rm -rf build/png-ios
+          rm -rf ios-deps/png-ios
 
           cmake \
             -S thirdparty/libpng \
-            -B build/png-ios \
+            -B ios-deps/png-ios \
             -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
             -DCMAKE_SYSTEM_NAME=iOS \
             -DCMAKE_OSX_SYSROOT="$SDK" \
@@ -137,21 +137,21 @@ jobs:
             -DCMAKE_C_FLAGS="-include math.h"
 
           cmake \
-            --build build/png-ios \
+            --build ios-deps/png-ios \
             --parallel "$(sysctl -n hw.ncpu)"
 
-          PNG_LIB="$(find build/png-ios -name 'libpng*.a' | head -n 1)"
+          PNG_LIB="$(find ios-deps/png-ios -name 'libpng*.a' | head -n 1)"
 
           if [ -z "$PNG_LIB" ]; then
             echo "ERROR: no libpng*.a was produced."
             exit 1
           fi
 
-          if [ ! -f "build/png-ios/libpng.a" ]; then
-            cp "$PNG_LIB" build/png-ios/libpng.a
+          if [ ! -f "ios-deps/png-ios/libpng.a" ]; then
+            cp "$PNG_LIB" ios-deps/png-ios/libpng.a
           fi
 
-          test -f build/png-ios/libpng.a
+          test -f ios-deps/png-ios/libpng.a
 
       # ------------------------------------------------------------
       # curl (Secure Transport for TLS, no external SSL/SSH/IDN deps)
@@ -163,11 +163,11 @@ jobs:
 
           SDK="$(xcrun --sdk iphoneos --show-sdk-path)"
 
-          rm -rf build/curl-ios
+          rm -rf ios-deps/curl-ios
 
           cmake \
             -S thirdparty/curl \
-            -B build/curl-ios \
+            -B ios-deps/curl-ios \
             -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
             -DCMAKE_SYSTEM_NAME=iOS \
             -DCMAKE_OSX_SYSROOT="$SDK" \
@@ -187,21 +187,21 @@ jobs:
             -DZLIB_LIBRARY="$SDK/usr/lib/libz.tbd"
 
           cmake \
-            --build build/curl-ios \
+            --build ios-deps/curl-ios \
             --parallel "$(sysctl -n hw.ncpu)"
 
-          CURL_LIB="$(find build/curl-ios -name 'libcurl*.a' | head -n 1)"
+          CURL_LIB="$(find ios-deps/curl-ios -name 'libcurl*.a' | head -n 1)"
 
           if [ -z "$CURL_LIB" ]; then
             echo "ERROR: no libcurl*.a was produced."
             exit 1
           fi
 
-          if [ ! -f "build/curl-ios/libcurl.a" ]; then
-            cp "$CURL_LIB" build/curl-ios/libcurl.a
+          if [ ! -f "ios-deps/curl-ios/libcurl.a" ]; then
+            cp "$CURL_LIB" ios-deps/curl-ios/libcurl.a
           fi
 
-          test -f build/curl-ios/libcurl.a
+          test -f ios-deps/curl-ios/libcurl.a
 
       # ------------------------------------------------------------
       # SDL2 (built from thirdparty/SDL-src; thirdparty/SDL is headers-only
@@ -219,37 +219,37 @@ jobs:
 
           SDK="$(xcrun --sdk iphoneos --show-sdk-path)"
 
-          rm -rf build/sdl2-ios build/sdl2-ios-install
+          rm -rf ios-deps/sdl2-ios ios-deps/sdl2-ios-install
 
           cmake \
             -S thirdparty/SDL-src \
-            -B build/sdl2-ios \
+            -B ios-deps/sdl2-ios \
             -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
             -DCMAKE_SYSTEM_NAME=iOS \
             -DCMAKE_OSX_SYSROOT="$SDK" \
             -DCMAKE_OSX_ARCHITECTURES=arm64 \
             -DCMAKE_OSX_DEPLOYMENT_TARGET="$IPHONEOS_DEPLOYMENT_TARGET" \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_INSTALL_PREFIX="$(pwd)/build/sdl2-ios-install" \
+            -DCMAKE_INSTALL_PREFIX="$(pwd)/ios-deps/sdl2-ios-install" \
             -DSDL_STATIC=ON \
             -DSDL_SHARED=OFF \
             -DSDL_TEST=OFF \
             -DCMAKE_C_FLAGS="-Wno-error=declaration-after-statement"
 
           cmake \
-            --build build/sdl2-ios \
+            --build ios-deps/sdl2-ios \
             --parallel "$(sysctl -n hw.ncpu)"
 
-          cmake --install build/sdl2-ios
+          cmake --install ios-deps/sdl2-ios
 
-          SDL2_LIB="$(find build/sdl2-ios-install -name 'libSDL2.a' | head -n 1)"
+          SDL2_LIB="$(find ios-deps/sdl2-ios-install -name 'libSDL2.a' | head -n 1)"
 
           if [ -z "$SDL2_LIB" ]; then
             echo "ERROR: no libSDL2.a was produced/installed."
             exit 1
           fi
 
-          if [ ! -d "build/sdl2-ios-install/include/SDL2" ]; then
+          if [ ! -d "ios-deps/sdl2-ios-install/include/SDL2" ]; then
             echo "ERROR: SDL2 headers were not installed where expected."
             exit 1
           fi

@@ -440,26 +440,26 @@ def check_deps(conf):
 		conf.check(
 			lib='freetype',
 			uselib_store='FT2',
-			libpath=[os.path.abspath('build/freetype-ios')]
+			libpath=[os.path.abspath('ios-deps/freetype-ios')]
 		)
 
 		conf.check(
 			lib='jpeg',
 			uselib_store='JPEG',
 			define_name='HAVE_JPEG',
-			libpath=[os.path.abspath('build/jpeg-ios')]
+			libpath=[os.path.abspath('ios-deps/jpeg-ios')]
 		)
 		conf.check(
 			lib='png',
 			uselib_store='PNG',
 			define_name='HAVE_PNG',
-			libpath=[os.path.abspath('build/png-ios')]
+			libpath=[os.path.abspath('ios-deps/png-ios')]
 		)
 		conf.check(
 			lib='curl',
 			uselib_store='CURL',
 			define_name='HAVE_CURL',
-			libpath=[os.path.abspath('build/curl-ios')]
+			libpath=[os.path.abspath('ios-deps/curl-ios')]
 		)
 		conf.check(lib='z', uselib_store='ZLIB', define_name='HAVE_ZLIB')
 		if not conf.env.TOGLES:
@@ -468,16 +468,16 @@ def check_deps(conf):
 		conf.check(framework='CoreFoundation', uselib_store='COREFOUNDATION', msg='Checking for CoreFoundation')
 
 		# thirdparty/SDL is headers-only (no library to link), so SDL2 is
-		# built from thirdparty/SDL-src and installed to build/sdl2-ios-install
+		# built from thirdparty/SDL-src and installed to ios-deps/sdl2-ios-install
 		# by the CI workflow; the generic 'sdl2' waf tool only knows how to
 		# consume a framework or pkg-config package on darwin, neither of
 		# which applies to this static cross-build, so it's wired up here
 		# by hand instead (see the guard around conf.load('sdl2') below).
-		conf.env.INCLUDES_SDL2 = [os.path.abspath('build/sdl2-ios-install/include/SDL2')]
+		conf.env.INCLUDES_SDL2 = [os.path.abspath('ios-deps/sdl2-ios-install/include/SDL2')]
 		conf.check(
 			lib='SDL2',
 			uselib_store='SDL2',
-			libpath=[os.path.abspath('build/sdl2-ios-install/lib')]
+			libpath=[os.path.abspath('ios-deps/sdl2-ios-install/lib')]
 		)
 		conf.env.HAVE_SDL2 = 1
 	else:
