@@ -438,14 +438,10 @@ def check_deps(conf):
 			if conf.options.OPUS:
 				conf.check_cfg(package='opus', uselib_store='OPUS', args=['--cflags', '--libs'])
 	elif conf.env.IOS:
-		conf.env.append_unique(
-			'LIBPATH_FT2',
-			[os.path.abspath('build/freetype-ios')]
-		)
-
 		conf.check(
 			lib='freetype',
-			uselib_store='FT2'
+			uselib_store='FT2',
+			libpath=[os.path.abspath('build/freetype-ios')]
 		)
 
 		conf.check(lib='jpeg', uselib_store='JPEG', define_name='HAVE_JPEG')
