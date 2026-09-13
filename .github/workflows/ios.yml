@@ -133,7 +133,8 @@ jobs:
             -DPNG_EXECUTABLES=OFF \
             -DPNG_TESTS=OFF \
             -DZLIB_INCLUDE_DIR="$SDK/usr/include" \
-            -DZLIB_LIBRARY="$SDK/usr/lib/libz.tbd"
+            -DZLIB_LIBRARY="$SDK/usr/lib/libz.tbd" \
+            -DCMAKE_C_FLAGS="-include math.h"
 
           cmake \
             --build build/png-ios \
