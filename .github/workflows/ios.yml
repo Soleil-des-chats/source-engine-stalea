@@ -62,14 +62,7 @@ jobs:
             --build build/freetype-ios \
             --parallel "$(sysctl -n hw.ncpu)"
 
-          FREETYPE_LIB="$(find build/freetype-ios -name 'libfreetype.a' -type f -print -quit)"
-
-          if [ -z "$FREETYPE_LIB" ]; then
-            echo "ERROR: libfreetype.a was not produced."
-            exit 1
-          fi
-
-          cp "$FREETYPE_LIB" build/freetype-ios/libfreetype.a
+          test -f build/freetype-ios/libfreetype.a
 
       # ------------------------------------------------------------
       # Waf
@@ -131,7 +124,6 @@ jobs:
 
           APP_NAME="$(basename "$APP")"
 
-          # Remove any signatures that may have been generated.
           codesign --remove-signature "Payload/$APP_NAME" || true
 
           zip -r "Stalea-iOS-unsigned.ipa" Payload
