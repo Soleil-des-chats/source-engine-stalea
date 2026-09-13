@@ -1,0 +1,136 @@
+name: Build iOS
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    runs-on: macos-15
+
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_16.4.app/Contents/Developer
+      IPHONEOS_DEPLOYMENT_TARGET: "12.0"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s "$DEVELOPER_DIR"
+
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-path
+          xcrun --sdk iphoneos -f clang
+          xcrun --sdk iphoneos -f clang++
+
+      - name: Install build dependencies
+        run: |
+          brew install cmake sdl2
+
+      # ------------------------------------------------------------
+      # FreeType
+      # ------------------------------------------------------------
+
+      - name: Build FreeType for iOS
+        run: |
+          set -euxo pipefail
+
+          SDK="$(xcrun --sdk iphoneos --show-sdk-path)"
+
+          rm -rf build/freetype-ios
+
+          cmake \
+            -S thirdparty/freetype \
+            -B build/freetype-ios \
+            -DCMAKE_SYSTEM_NAME=iOS \
+            -DCMAKE_OSX_SYSROOT="$SDK" \
+            -DCMAKE_OSX_ARCHITECTURES=arm64 \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET="$IPHONEOS_DEPLOYMENT_TARGET" \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DFT_BUILD_TESTS=OFF
+
+          cmake \
+            --build build/freetype-ios \
+            --parallel "$(sysctl -n hw.ncpu)"
+
+          test -f build/freetype-ios/libfreetype.a
+
+      # ------------------------------------------------------------
+      # Waf
+      # ------------------------------------------------------------
+
+      - name: Configure iOS
+        run: |
+          set -euxo pipefail
+
+          export SDKROOT="$(xcrun --sdk iphoneos --show-sdk-path)"
+          export CC="$(xcrun --sdk iphoneos -f clang)"
+          export CXX="$(xcrun --sdk iphoneos -f clang++)"
+
+          ./waf configure \
+            -T release \
+            --ios \
+            --disable-warns
+
+      - name: Build iOS
+        run: |
+          set -euxo pipefail
+
+          export SDKROOT="$(xcrun --sdk iphoneos --show-sdk-path)"
+          export CC="$(xcrun --sdk iphoneos -f clang)"
+          export CXX="$(xcrun --sdk iphoneos -f clang++)"
+
+          ./waf build
+
+      # ------------------------------------------------------------
+      # IPA
+      # ------------------------------------------------------------
+
+      - name: Find iOS app
+        run: |
+          set -e
+
+          find . \
+            -type d \
+            -name "*.app" \
+            -print
+
+      - name: Package unsigned IPA
+        run: |
+          set -euxo pipefail
+
+          APP="$(find . -type d -name "*.app" | head -n 1)"
+
+          if [ -z "$APP" ]; then
+            echo "ERROR: No .app was produced."
+            exit 1
+          fi
+
+          echo "Using app: $APP"
+
+          rm -rf Payload
+          mkdir -p Payload
+
+          cp -R "$APP" Payload/
+
+          APP_NAME="$(basename "$APP")"
+
+          # Remove any signatures that may have been generated.
+          codesign --remove-signature "Payload/$APP_NAME" || true
+
+          zip -r "Stalea-iOS-unsigned.ipa" Payload
+
+      - name: Upload unsigned IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stalea-iOS-unsigned
+          path: Stalea-iOS-unsigned.ipa
+          if-no-files-found: error

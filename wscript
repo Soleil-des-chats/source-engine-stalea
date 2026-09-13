@@ -438,7 +438,16 @@ def check_deps(conf):
 			if conf.options.OPUS:
 				conf.check_cfg(package='opus', uselib_store='OPUS', args=['--cflags', '--libs'])
 	elif conf.env.IOS:
-		conf.check(lib='freetype2', uselib_store='FT2')
+		conf.env.append_unique(
+			'LIBPATH_FT2',
+			[os.path.abspath('build/freetype-ios')]
+		)
+
+		conf.check(
+			lib='freetype',
+			uselib_store='FT2'
+		)
+
 		conf.check(lib='jpeg', uselib_store='JPEG', define_name='HAVE_JPEG')
 		conf.check(lib='png', uselib_store='PNG', define_name='HAVE_PNG')
 		conf.check(lib='curl', uselib_store='CURL', define_name='HAVE_CURL')
@@ -502,6 +511,29 @@ def configure(conf):
 		conf.load('force_32bit')
 
 	define_platform(conf)
+
+	if conf.env.IOS:
+		sdk = conf.cmd_and_log([
+			'xcrun',
+			'--sdk',
+			'iphoneos',
+			'--show-sdk-path'
+		]).strip()
+
+		if not sdk:
+			conf.fatal('Unable to find iPhoneOS SDK')
+
+		ios_flags = [
+			'-arch',
+			'arm64',
+			'-isysroot',
+			sdk,
+			'-miphoneos-version-min=12.0',
+		]
+
+		conf.env.append_unique('CFLAGS', ios_flags)
+		conf.env.append_unique('CXXFLAGS', ios_flags)
+		conf.env.append_unique('LINKFLAGS', ios_flags)
 
 	if conf.env.TOGLES:
 		projects['game'] += ['togles']
