@@ -48,11 +48,6 @@
 #endif
 #endif
 
-#ifdef IOS
-	#include <OpenGLES/ES2/gl.h>
-	#include <OpenGLES/ES2/glext.h>
-#endif
-
 #include "tier0/platform.h"
 
 #include "bitmap/imageformat.h"
