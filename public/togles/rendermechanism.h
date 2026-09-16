@@ -32,6 +32,7 @@
 #if defined(IOS) && !defined(ANGLE)
 #include <OpenGLES/ES2/gl.h>
 #include <OpenGLES/ES2/glext.h>
+#include "togles/linuxwin/ios_gl_compat.h"
 #ifndef GL_HALF_FLOAT
 #define GL_HALF_FLOAT GL_HALF_FLOAT_OES
 #endif
