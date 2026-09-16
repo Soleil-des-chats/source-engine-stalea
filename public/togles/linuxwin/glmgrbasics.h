@@ -33,7 +33,13 @@
 #pragma once
 
 #ifdef USE_SDL
+#if defined(IOS)
+#include <OpenGLES/ES2/gl.h>
+#include <OpenGLES/ES2/glext.h>
+#include "togles/linuxwin/ios_gl_compat.h"
+#else
 #include "SDL_opengl.h"
+#endif
 #endif
 
 #ifdef OSX
