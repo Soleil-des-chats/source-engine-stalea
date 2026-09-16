@@ -35,6 +35,12 @@
 #ifndef GL_HALF_FLOAT
 #define GL_HALF_FLOAT GL_HALF_FLOAT_OES
 #endif
+#ifndef APIENTRY
+#define APIENTRY
+#endif
+#ifndef APIENTRYP
+#define APIENTRYP APIENTRY *
+#endif
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>
