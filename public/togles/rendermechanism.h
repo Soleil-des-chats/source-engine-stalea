@@ -29,16 +29,8 @@
 
 #undef PROTECTED_THINGS_ENABLE
 
-#if defined(IOS) && !defined(ANGLE)
-#include <OpenGLES/ES2/gl.h>
-#include <OpenGLES/ES2/glext.h>
-#ifndef GL_HALF_FLOAT
-#define GL_HALF_FLOAT GL_HALF_FLOAT_OES
-#endif
-#else
 #include <GL/gl.h>
 #include <GL/glext.h>
-#endif
 
 #include "tier0/basetypes.h"
 #include "tier0/platform.h"
