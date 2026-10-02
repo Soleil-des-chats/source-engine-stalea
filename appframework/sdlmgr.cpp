@@ -25,9 +25,9 @@
 #endif
 #if IOS
 #include <dlfcn.h>
-#include "SDL2/SDL_rect.h"
-#include "SDL2/sdl_video.h"
-#include "SDL2/SDL_syswm.h"
+#include "SDL_rect.h"
+#include "SDL_video.h"
+#include "SDL_syswm.h"
 #if defined(ANGLE)
 #include "EGL/egl.h"
 #include "EGL/eglext.h"
