@@ -20,6 +20,12 @@
 #include "tier1/utllinkedlist.h"
 #include "tier1/convar.h"
 
+// SDL_GetWindowSizeInPixels() is an SDL 2.26+ API; fall back to the
+// older, HiDPI-aware equivalent SDL recommends for earlier versions.
+#if !SDL_VERSION_ATLEAST(2, 26, 0)
+#define SDL_GetWindowSizeInPixels SDL_GL_GetDrawableSize
+#endif
+
 #if TOGLES && !IOS
 #include <EGL/egl.h>
 #endif
@@ -76,7 +82,7 @@ COpenGLEntryPoints *gGL = NULL;
 
 const int kBogusSwapInterval = INT_MAX;
 
-#if defined ANDROID || defined TOGLES
+#if defined ANDROID || defined TOGLES && ( !defined IOS || defined ANGLE )
 static void *l_gl4es = NULL;
 static void *l_egl = NULL;
 static void *l_gles = NULL;
